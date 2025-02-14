@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Hero page</title>
+</head>
+<body>
+<p th:text="HELLO"></p>
+<p th:text="${hero.getName()}"></p>
+<p th:text="${hero.getId()}"></p>
+<img th:src="'https://cdn.akamai.steamstatic.com/apps/dota2/images/dota_react/heroes/'+${hero.getImageLink()} +'.png'" alt="">
+</body>

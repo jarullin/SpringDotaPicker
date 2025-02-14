@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Просто список героев (пока)</title>
+    <link rel="stylesheet" href="picker.css">
+</head>
+<body>
+    <a th:href="@{/styles/picker.css}">test</a>
+    <div class="image-container" style="display: flex;
+    flex-direction: row;
+    flex-wrap: wrap; /* Позволяет изображениям переноситься на новую строку */
+    gap: 10px; /* Задает расстояние между изображениями */
+    justify-content: center; /* Центрирует изображения */">
+        <div th:each="hero : ${heroes}">
+            <a th:href="@{/api/hero/{id}(id=${hero.getId()})}">
+                <img th:src="'https://cdn.akamai.steamstatic.com/apps/dota2/images/dota_react/heroes/'+${hero.getImageLink()} +'.png'" alt="" width="150">
+            </a>
+        </div>
+    </div>
+</body>
