@@ -14,8 +14,7 @@ public class MatchupId implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof MatchupId) {
-            MatchupId other = (MatchupId) obj;
+        if (obj instanceof MatchupId other) {
             return other.getHeroId() == this.getHeroId() & other.getEnemyId() == this.getEnemyId();
         }
         return false;

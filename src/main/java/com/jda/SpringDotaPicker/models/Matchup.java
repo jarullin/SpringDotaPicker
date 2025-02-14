@@ -8,9 +8,7 @@ import lombok.Data;
 @IdClass(MatchupId.class)
 public class Matchup{
     @Id
-    private int heroId;
-    @Id
-    private int enemyId;
+    private MatchupId id;
     private int gamesPlayed;
     private int wins;
 }

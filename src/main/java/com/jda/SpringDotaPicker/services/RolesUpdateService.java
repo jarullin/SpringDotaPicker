@@ -1,12 +1,8 @@
 package com.jda.SpringDotaPicker.services;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.jda.SpringDotaPicker.models.Hero;
 import com.jda.SpringDotaPicker.models.HeroRole;
 import com.jda.SpringDotaPicker.repositories.RoleRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -16,11 +12,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @EnableAsync
@@ -33,6 +27,9 @@ public class RolesUpdateService {
         this.heroService = heroService;
     }
 
+    /*
+    updates roles in the database once a week
+     */
     @Async
     @Scheduled(cron = "0 0 0 * * 0")
     public void updateRoles() throws IOException {
@@ -58,18 +55,17 @@ public class RolesUpdateService {
             }
             System.out.println("Roles updated: " + hero.getName());
             try {
-                Thread.sleep(1000);
+                Thread.sleep(1000);     // So we don't get the site DOSed
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }
     }
 
-
     private StringBuilder getResponse(HttpURLConnection connection) throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
         String inputLine;
-        StringBuffer content = new StringBuffer();
+        StringBuilder content = new StringBuilder();
         while ((inputLine = in.readLine()) != null) {
             content.append(inputLine);
         }
@@ -82,6 +78,10 @@ public class RolesUpdateService {
         return sb;
     }
 
+    /*
+    Parses json placed on the HTML code in dota2protracker
+    Criterion for a role assigned to hero: 20% or more of total games played on the role
+     */
     private List<HeroRole.Role> parseJson(StringBuilder sb) {
         int index = sb.indexOf("position");
         List<HeroRole.Role> roles = new ArrayList<>();

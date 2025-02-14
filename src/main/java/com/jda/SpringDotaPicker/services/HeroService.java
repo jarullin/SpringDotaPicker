@@ -20,6 +20,9 @@ public class HeroService {
         this.matchupsRepository = matchupsRepository;
     }
 
+    /*
+    Returns list of all heroes
+     */
     public List<Hero> findAll() {
         Iterable<Hero> heroes = heroRepository.findAll();
         List<Hero> res = new ArrayList<>();
@@ -28,14 +31,18 @@ public class HeroService {
         return res;
     }
 
+    /*
+    returns a single hero
+     */
     public Hero findById(int id) {
         return heroRepository.findById(id);
     }
 
-    public void updateRoles(int heroid, List<HeroRole> roles){
-
-    }
-
+    /**
+    * Calculates score for every unpicked hero
+    * @param enemies: list of enemy heroes (up to five)
+     * @return map (heroId: int , score: double), the higher is score - the more likely hero wins against given enemies
+    */
     public Map<Integer, Double> calculatePick(List<Hero> enemies) {
         // TODO: add bans
         // heroId : calculated win probability
@@ -43,25 +50,33 @@ public class HeroService {
                 .filter(x -> !enemies.contains(x))
                 .collect(Collectors.toMap(Hero::getId, _ -> 50.0));
         for (Hero enemy : enemies) {
-            int maxGamesPlayed = matchupsRepository.findMaxGamesPlayedForEnemy(enemy.getId());
-            int minGamesPlayed = matchupsRepository.findMaxGamesPlayedForEnemy(enemy.getId());
+            int maxGamesPlayed = matchupsRepository.findMaxGamesPlayedForEnemy(enemy.getId()).orElse(10000);
+            int minGamesPlayed = matchupsRepository.findMaxGamesPlayedForEnemy(enemy.getId()).orElse(0);
+            // if hero rarely picked against given enemy, the score will not changed
+            // currently only top 50% picked heroes are taken into account
             double threshold = minGamesPlayed + (double) (maxGamesPlayed - minGamesPlayed) / 2;
             for (Integer heroId : pool.keySet()) {
                 Matchup matchup = matchupsRepository.findOne(heroId, enemy.getId());
-                if (matchup != null & matchup.getGamesPlayed() >= threshold) {
-                    pool.compute(heroId, (k, v) -> v + 0.2 * (matchup.getWins() - 50));
+                assert matchup != null;
+                if (matchup.getGamesPlayed() >= threshold) {
+                    // 20% of winrate/loserate are added to score
+                    pool.compute(heroId, (_, v) -> v + 0.2 * (matchup.getWins() - 50));
                 }
             }
         }
         return pool;
     }
 
+    /**
+     *
+     * @param enemies: list of enemies
+     * @return top 5 carry picks against given enemy
+     */
     public List<Hero> getCarryPicks(List<Hero> enemies) {
         return calculatePick(enemies).entrySet().stream()
                 .sorted(Map.Entry.<Integer,Double>comparingByValue().reversed())
                 .map(entry -> findById(entry.getKey()))
                 .limit(5)
                 .collect(Collectors.toList());
-
     }
 }

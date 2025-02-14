@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RoleRepository extends CrudRepository<HeroRole, Long> {
-    public void deleteByHeroId(Integer heroId);
+    void deleteByHeroId(Integer heroId);
 }
