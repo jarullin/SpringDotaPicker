@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Entity
 @Data
+@Table(name="hero_roles")
 public class HeroRole {
 
     @EmbeddedId

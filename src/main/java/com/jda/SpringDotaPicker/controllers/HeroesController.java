@@ -2,6 +2,7 @@ package com.jda.SpringDotaPicker.controllers;
 
 import com.jda.SpringDotaPicker.models.Hero;
 import com.jda.SpringDotaPicker.services.HeroService;
+import com.jda.SpringDotaPicker.services.MatchupsUpdateService;
 import com.jda.SpringDotaPicker.services.RolesUpdateService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,10 +19,12 @@ public class HeroesController {
 
     private final HeroService heroService;
     private final RolesUpdateService rolesUpdateService;
+    private final MatchupsUpdateService matchupsUpdateService;
 
-    public HeroesController(HeroService heroService, RolesUpdateService rolesUpdateService) {
+    public HeroesController(HeroService heroService, RolesUpdateService rolesUpdateService, MatchupsUpdateService matchupsUpdateService) {
         this.heroService = heroService;
         this.rolesUpdateService = rolesUpdateService;
+        this.matchupsUpdateService = matchupsUpdateService;
     }
 
 
@@ -40,7 +43,7 @@ public class HeroesController {
     @GetMapping("/hero/{id}")
     public String hero(@PathVariable int id, Model model) {
         Hero hero = heroService.findById(id);
-        System.out.println(hero);
+        //System.out.println(hero);
         if (hero == null) {
             System.out.println("Bad request by hero/"+id);
             return "errorpage";
@@ -61,6 +64,12 @@ public class HeroesController {
             System.out.println(e.getMessage());
             System.out.println(Arrays.toString(e.getStackTrace()));
         }
+        return "redirect:/heroes";
+    }
+
+    @GetMapping("/update/matchups")
+    public String heroUpdMatchups() {
+        matchupsUpdateService.updateMatchups();
         return "redirect:/heroes";
     }
 }

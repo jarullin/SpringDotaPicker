@@ -3,6 +3,7 @@ package com.jda.SpringDotaPicker.services;
 import com.jda.SpringDotaPicker.models.Hero;
 import com.jda.SpringDotaPicker.models.HeroRole;
 import com.jda.SpringDotaPicker.repositories.RoleRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -19,11 +20,11 @@ import java.util.*;
 @Service
 @EnableAsync
 public class RolesUpdateService {
-    private final RoleRepository repository;
+    private final RoleRepository roleRepository;
     private final HeroService heroService;
 
-    public RolesUpdateService(RoleRepository repository, HeroService heroService) {
-        this.repository = repository;
+    public RolesUpdateService(RoleRepository roleRepository, HeroService heroService) {
+        this.roleRepository = roleRepository;
         this.heroService = heroService;
     }
 
@@ -31,11 +32,12 @@ public class RolesUpdateService {
     updates roles in the database once a week
      */
     @Async
+    @Transactional
     @Scheduled(cron = "0 0 0 * * 0")
     public void updateRoles() throws IOException {
         List<Hero> heroes = heroService.findAll();
         for (Hero hero : heroes) {
-            repository.deleteById_HeroId(hero.getId());
+            roleRepository.deleteById_HeroId(hero.getId());
             URL url = URI.create("https://dota2protracker.com/hero/" + hero.getName()).toURL();
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
@@ -51,8 +53,9 @@ public class RolesUpdateService {
                 HeroRole heroRole = new HeroRole();
                 heroRole.getId().setRole(role);
                 heroRole.getId().setHeroId(hero.getId());
-                repository.save(heroRole);
+                roleRepository.save(heroRole);
             }
+
             System.out.println("Roles updated: " + hero.getName());
             try {
                 Thread.sleep(1000);     // So we don't get the site DOSed
