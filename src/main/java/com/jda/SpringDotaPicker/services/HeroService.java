@@ -2,7 +2,7 @@ package com.jda.SpringDotaPicker.services;
 
 import com.jda.SpringDotaPicker.models.Hero;
 import com.jda.SpringDotaPicker.models.Matchup;
-import com.jda.SpringDotaPicker.repositories.HeroRepository;
+import com.jda.SpringDotaPicker.repositories.HeroesRepository;
 import com.jda.SpringDotaPicker.repositories.MatchupsRepository;
 import org.springframework.stereotype.Service;
 
@@ -11,11 +11,11 @@ import java.util.stream.Collectors;
 
 @Service
 public class HeroService {
-    private final HeroRepository heroRepository;
+    private final HeroesRepository heroesRepository;
     private final MatchupsRepository matchupsRepository;
 
-    public HeroService(HeroRepository heroRepository, MatchupsRepository matchupsRepository) {
-        this.heroRepository = heroRepository;
+    public HeroService(HeroesRepository heroesRepository, MatchupsRepository matchupsRepository) {
+        this.heroesRepository = heroesRepository;
         this.matchupsRepository = matchupsRepository;
     }
 
@@ -23,7 +23,7 @@ public class HeroService {
     Returns list of all heroes
      */
     public List<Hero> findAll() {
-        Iterable<Hero> heroes = heroRepository.findAll();
+        Iterable<Hero> heroes = heroesRepository.findAll();
         List<Hero> res = new ArrayList<>();
         heroes.iterator().forEachRemaining(res::add);
         res.sort(Comparator.comparing(Hero::getName));
@@ -34,7 +34,7 @@ public class HeroService {
     returns a single hero
      */
     public Hero findById(int id) {
-        return heroRepository.findById(id);
+        return heroesRepository.findById(id);
     }
 
     /**

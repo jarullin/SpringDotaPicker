@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 
 
 @Repository
-public interface HeroRepository extends CrudRepository<Hero, Integer> {
+public interface HeroesRepository extends CrudRepository<Hero, Integer> {
     Hero findById(int id);
 
 }

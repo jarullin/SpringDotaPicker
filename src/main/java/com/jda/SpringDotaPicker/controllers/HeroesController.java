@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 @Controller
-@RequestMapping("/api")
 public class HeroesController {
 
     private final HeroService heroService;
@@ -31,7 +31,7 @@ public class HeroesController {
     }
 
     @GetMapping("/picker")
-    public String heroes(Model model) {
+    public String heroPicker(Model model) {
         Iterable<Hero> heroes = heroService.findAll();
         model.addAttribute("heroes", heroes);
         return "heroes";

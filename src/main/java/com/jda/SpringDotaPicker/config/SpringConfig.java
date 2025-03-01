@@ -18,6 +18,15 @@ import org.thymeleaf.templatemode.TemplateMode;
 public class SpringConfig implements WebMvcConfigurer {
     private final ApplicationContext applicationContext;
 
+    // Allow CORS for front-end
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("http://localhost:3000")
+                .allowedMethods("GET")
+                .allowedHeaders("*");
+    }
+
 
     @Autowired
     public SpringConfig(ApplicationContext applicationContext) {
