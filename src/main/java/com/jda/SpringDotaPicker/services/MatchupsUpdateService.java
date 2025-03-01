@@ -5,11 +5,11 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class MatchupsUpdateService {
-
+    private HeroService heroService;
     // TODO: implement
     // Should get matchup stats from opendotaAPI
     @Scheduled(cron = "0 0 0 * * 0")
-    public void updateMatchups(HeroService heroService) {
+    public void updateMatchups() {
 
     }
 }

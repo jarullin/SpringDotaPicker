@@ -7,12 +7,8 @@ import lombok.Data;
 @Data
 public class HeroRole {
 
-    @Id
-    private Integer heroId;
-
-    @Id
-    @Enumerated(EnumType.STRING)
-    private Role role;
+    @EmbeddedId
+    private HeroRoleId id;
 
     public enum Role {
         CARRY, MIDLANER, OFFLANER, SOFTSUP, HARDSUP

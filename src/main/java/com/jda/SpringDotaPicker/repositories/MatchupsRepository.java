@@ -11,10 +11,11 @@ import java.util.Optional;
 
 @Repository
 public interface MatchupsRepository extends JpaRepository<Matchup, MatchupId> {
-    Matchup findOne(int heroId, int enemyId);
+    Matchup findById_HeroIdAndId_EnemyId(int heroId, int enemyId);
 
     @Query("Select Min(m.gamesPlayed) from Matchup m where m.id.enemyId = :enemyId")
     Optional<Integer> findMinGamesPlayedForEnemy(@Param("enemyId") Integer enemyId);
     @Query("Select Max(m.gamesPlayed) from Matchup m where m.id.enemyId = :enemyId")
     Optional<Integer> findMaxGamesPlayedForEnemy(@Param("enemyId") Integer enemyId);
 }
+

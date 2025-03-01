@@ -5,9 +5,8 @@ import lombok.Data;
 
 @Entity
 @Data
-@IdClass(MatchupId.class)
 public class Matchup{
-    @Id
+    @EmbeddedId
     private MatchupId id;
     private int gamesPlayed;
     private int wins;

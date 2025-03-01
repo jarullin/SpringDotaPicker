@@ -1,7 +1,6 @@
 package com.jda.SpringDotaPicker.services;
 
 import com.jda.SpringDotaPicker.models.Hero;
-import com.jda.SpringDotaPicker.models.HeroRole;
 import com.jda.SpringDotaPicker.models.Matchup;
 import com.jda.SpringDotaPicker.repositories.HeroRepository;
 import com.jda.SpringDotaPicker.repositories.MatchupsRepository;
@@ -48,7 +47,7 @@ public class HeroService {
         // heroId : calculated win probability
         Map<Integer, Double> pool = findAll().stream()
                 .filter(x -> !enemies.contains(x))
-                .collect(Collectors.toMap(Hero::getId, _ -> 50.0));
+                .collect(Collectors.toMap(Hero::getId, x -> 50.0));
         for (Hero enemy : enemies) {
             int maxGamesPlayed = matchupsRepository.findMaxGamesPlayedForEnemy(enemy.getId()).orElse(10000);
             int minGamesPlayed = matchupsRepository.findMaxGamesPlayedForEnemy(enemy.getId()).orElse(0);
@@ -56,11 +55,11 @@ public class HeroService {
             // currently only top 50% picked heroes are taken into account
             double threshold = minGamesPlayed + (double) (maxGamesPlayed - minGamesPlayed) / 2;
             for (Integer heroId : pool.keySet()) {
-                Matchup matchup = matchupsRepository.findOne(heroId, enemy.getId());
+                Matchup matchup = matchupsRepository.findById_HeroIdAndId_EnemyId(heroId, enemy.getId());
                 assert matchup != null;
                 if (matchup.getGamesPlayed() >= threshold) {
                     // 20% of winrate/loserate are added to score
-                    pool.compute(heroId, (_, v) -> v + 0.2 * (matchup.getWins() - 50));
+                    pool.compute(heroId, (x, v) -> v + 0.2 * (matchup.getWins() - 50));
                 }
             }
         }

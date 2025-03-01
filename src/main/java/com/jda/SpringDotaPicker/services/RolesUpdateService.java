@@ -35,7 +35,7 @@ public class RolesUpdateService {
     public void updateRoles() throws IOException {
         List<Hero> heroes = heroService.findAll();
         for (Hero hero : heroes) {
-            repository.deleteByHeroId(hero.getId());
+            repository.deleteById_HeroId(hero.getId());
             URL url = URI.create("https://dota2protracker.com/hero/" + hero.getName()).toURL();
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
@@ -46,11 +46,11 @@ public class RolesUpdateService {
                 return;
             }
             StringBuilder response = getResponse(connection);
-            List<HeroRole.Role> heroRoles = parseJson(response);
-            for (HeroRole.Role role : heroRoles) {
+            List<String> heroRoles = parseJson(response);
+            for (String role : heroRoles) {
                 HeroRole heroRole = new HeroRole();
-                heroRole.setRole(role);
-                heroRole.setHeroId(hero.getId());
+                heroRole.getId().setRole(role);
+                heroRole.getId().setHeroId(hero.getId());
                 repository.save(heroRole);
             }
             System.out.println("Roles updated: " + hero.getName());
@@ -82,9 +82,9 @@ public class RolesUpdateService {
     Parses json placed on the HTML code in dota2protracker
     Criterion for a role assigned to hero: 20% or more of total games played on the role
      */
-    private List<HeroRole.Role> parseJson(StringBuilder sb) {
+    private List<String> parseJson(StringBuilder sb) {
         int index = sb.indexOf("position");
-        List<HeroRole.Role> roles = new ArrayList<>();
+        List<String> roles = new ArrayList<>();
         Map<Integer, Integer> posToMatches = new HashMap<>();
         int totalMatches = 0;
         while (index != -1) {
@@ -130,19 +130,19 @@ public class RolesUpdateService {
             if (entry.getValue() >= totalMatches * 0.2) {
                 switch (entry.getKey()) {
                     case 1:
-                        roles.add(HeroRole.Role.CARRY);
+                        roles.add(HeroRole.Role.CARRY.toString());
                         break;
                     case 2:
-                        roles.add(HeroRole.Role.MIDLANER);
+                        roles.add(HeroRole.Role.MIDLANER.toString());
                         break;
                     case 3:
-                        roles.add(HeroRole.Role.OFFLANER);
+                        roles.add(HeroRole.Role.OFFLANER.toString());
                         break;
                     case 4:
-                        roles.add(HeroRole.Role.SOFTSUP);
+                        roles.add(HeroRole.Role.SOFTSUP.toString());
                         break;
                     case 5:
-                        roles.add(HeroRole.Role.HARDSUP);
+                        roles.add(HeroRole.Role.HARDSUP.toString());
                         break;
                     default:
                         break;
