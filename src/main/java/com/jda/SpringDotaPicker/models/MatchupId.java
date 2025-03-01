@@ -12,6 +12,11 @@ public class MatchupId implements Serializable {
     private int heroId;
     private int enemyId;
 
+    public MatchupId() {}
+    public MatchupId(int heroId, int enemyId){
+        this.heroId = heroId;
+        this.enemyId = enemyId;
+    }
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof MatchupId other) {
