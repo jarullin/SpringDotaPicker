@@ -14,4 +14,17 @@ public class HeroRole {
     public enum Role {
         CARRY, MIDLANER, OFFLANER, SOFTSUP, HARDSUP
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof HeroRole) {
+            return id.equals(((HeroRole)obj).id);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
 }

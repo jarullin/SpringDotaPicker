@@ -2,6 +2,7 @@ package com.jda.SpringDotaPicker.services;
 
 import com.jda.SpringDotaPicker.models.Hero;
 import com.jda.SpringDotaPicker.models.HeroRole;
+import com.jda.SpringDotaPicker.models.HeroRoleId;
 import com.jda.SpringDotaPicker.repositories.RoleRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.scheduling.annotation.Async;
@@ -35,10 +36,13 @@ public class RolesUpdateService {
     @Transactional
     @Scheduled(cron = "0 0 0 * * 0")
     public void updateRoles() throws IOException {
+        System.out.println("Updating roles");
+        System.out.println();
         List<Hero> heroes = heroService.findAll();
         for (Hero hero : heroes) {
+            System.out.print("\r Updating roles for " + hero.getName());
             roleRepository.deleteById_HeroId(hero.getId());
-            URL url = URI.create("https://dota2protracker.com/hero/" + hero.getName()).toURL();
+            URL url = URI.create("https://dota2protracker.com/hero/" + hero.getName().replaceAll(" ","%20")).toURL();
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
             connection.connect();
@@ -49,14 +53,18 @@ public class RolesUpdateService {
             }
             StringBuilder response = getResponse(connection);
             List<String> heroRoles = parseJson(response);
+            System.out.print("\r Saving roles for " + hero.getName());
+            System.out.println(heroRoles);
             for (String role : heroRoles) {
                 HeroRole heroRole = new HeroRole();
-                heroRole.getId().setRole(role);
-                heroRole.getId().setHeroId(hero.getId());
-                roleRepository.save(heroRole);
+                HeroRoleId heroRoleId = new HeroRoleId();
+                heroRoleId.setHeroId(hero.getId());
+                heroRoleId.setRole(role);
+                heroRole.setId(heroRoleId);
+                System.out.println(heroRole);
+                roleRepository.saveAndFlush(heroRole);
             }
-
-            System.out.println("Roles updated: " + hero.getName());
+            System.out.print("\r Roles saved for " + hero.getName());
             try {
                 Thread.sleep(1000);     // So we don't get the site DOSed
             } catch (InterruptedException e) {
