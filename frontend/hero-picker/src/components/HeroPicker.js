@@ -30,6 +30,7 @@ function HeroPicker({ heroes, selectedEnemies, onEnemySelect, onEnemyDeselect })
                     </div>
                 ))}
             </div>
+            <hr></hr>
             <div style={{ overflowY: 'auto', display: 'flex', flexWrap: 'wrap' }}>
                 {heroes.map(hero => (
                     <div key={hero.id} style={{ margin: '5px' }}>
