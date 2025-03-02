@@ -62,7 +62,7 @@ function App() {
         onEnemyDeselect={handleEnemyDeselect}
         selectedEnemies={selectedEnemies}
       />
-      {recommendations && <Recommendations recommendations={recommendations} />}
+      <Recommendations recommendations={recommendations} />
     </div>
   );
 }

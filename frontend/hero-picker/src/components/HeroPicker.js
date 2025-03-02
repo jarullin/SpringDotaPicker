@@ -7,12 +7,14 @@ function HeroPicker({ heroes, selectedEnemies, onEnemySelect, onEnemyDeselect })
     return (
         <div>
             <h2>Select Enemy Heroes (max 5)</h2>
-            <div style={{ display: 'flex' }}>
+            <div style={{ display: 'flex'}}>
                 {selectedEnemies.map(enemy => (
-                    <div key={enemy.id}>
+                    <div key={enemy.id} style={{width:'20%'}}>
                         <input
                             type='image'
                             style={{
+                                position:'relative',
+                                width: '100%',
                                 maxHeight: 126,
                                 maxWidth: 225
                             }}

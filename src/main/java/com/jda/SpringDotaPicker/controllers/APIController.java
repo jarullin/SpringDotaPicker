@@ -1,6 +1,7 @@
 package com.jda.SpringDotaPicker.controllers;
 
 import com.jda.SpringDotaPicker.models.Hero;
+import com.jda.SpringDotaPicker.models.HeroPick;
 import com.jda.SpringDotaPicker.models.HeroRole;
 import com.jda.SpringDotaPicker.services.HeroService;
 import org.hibernate.boot.jaxb.SourceType;
@@ -42,15 +43,14 @@ public class APIController {
                 heroService.getRolePicks(enemyHeroes, HeroRole.Role.SOFTSUP.name()),
                 heroService.getRolePicks(enemyHeroes, HeroRole.Role.HARDSUP.name())
                 );
-        System.out.println(response);
         return response;
     }
 
-    public record PickResponse(List<Hero> carry,
-                               List<Hero> mid,
-                               List<Hero> offlane,
-                               List<Hero> softsup,
-                               List<Hero> hardsup) {
+    public record PickResponse(List<HeroPick> carry,
+                               List<HeroPick> mid,
+                               List<HeroPick> offlane,
+                               List<HeroPick> softsup,
+                               List<HeroPick> hardsup) {
 
     }
 }
