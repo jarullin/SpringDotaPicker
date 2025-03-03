@@ -46,6 +46,31 @@ public class APIController {
         return response;
     }
 
+    @GetMapping("/pickBans")
+    public PickResponse pickBans(@RequestParam(required = true) List<Integer> enemies, @RequestParam(required = true) List<Integer> bans) {
+        assert enemies != null;
+        assert !enemies.isEmpty() && enemies.size() <= 5;
+        assert bans != null & !bans.isEmpty();
+
+        List<Hero> enemyHeroes = heroService.findAll()
+                .stream()
+                .filter(hero -> enemies.contains(hero.getId()))
+                .toList();
+
+
+        List<Hero> bannedHeroes = heroService.findAll()
+                .stream()
+                .filter(hero -> bans.contains(hero.getId()))
+                .toList();
+        PickResponse response = new PickResponse(heroService.getRolePicks(enemyHeroes, bannedHeroes, HeroRole.Role.CARRY.name()),
+                heroService.getRolePicks(enemyHeroes, bannedHeroes, HeroRole.Role.MIDLANER.name()),
+                heroService.getRolePicks(enemyHeroes, bannedHeroes, HeroRole.Role.OFFLANER.name()),
+                heroService.getRolePicks(enemyHeroes, bannedHeroes, HeroRole.Role.SOFTSUP.name()),
+                heroService.getRolePicks(enemyHeroes, bannedHeroes, HeroRole.Role.HARDSUP.name())
+        );
+        return
+    }
+
     public record PickResponse(List<HeroPick> carry,
                                List<HeroPick> mid,
                                List<HeroPick> offlane,
