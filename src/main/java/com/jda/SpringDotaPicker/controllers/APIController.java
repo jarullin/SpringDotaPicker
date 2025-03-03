@@ -68,7 +68,7 @@ public class APIController {
                 heroService.getRolePicks(enemyHeroes, bannedHeroes, HeroRole.Role.SOFTSUP.name()),
                 heroService.getRolePicks(enemyHeroes, bannedHeroes, HeroRole.Role.HARDSUP.name())
         );
-        return
+        return response;
     }
 
     public record PickResponse(List<HeroPick> carry,

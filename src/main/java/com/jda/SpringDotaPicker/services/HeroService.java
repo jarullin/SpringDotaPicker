@@ -2,7 +2,6 @@ package com.jda.SpringDotaPicker.services;
 
 import com.jda.SpringDotaPicker.models.Hero;
 import com.jda.SpringDotaPicker.models.HeroPick;
-import com.jda.SpringDotaPicker.models.HeroRole;
 import com.jda.SpringDotaPicker.models.Matchup;
 import com.jda.SpringDotaPicker.repositories.HeroesRepository;
 import com.jda.SpringDotaPicker.repositories.MatchupsRepository;
