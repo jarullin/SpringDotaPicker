@@ -5,6 +5,8 @@ import com.jda.SpringDotaPicker.models.HeroPick;
 import com.jda.SpringDotaPicker.models.HeroRole;
 import com.jda.SpringDotaPicker.services.HeroService;
 import org.hibernate.boot.jaxb.SourceType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,7 +19,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/api")
 public class APIController {
 
-
+    private static final Logger logger = LoggerFactory.getLogger(APIController.class);
     private final HeroService heroService;
 
     public APIController(HeroService heroService) {
@@ -47,16 +49,16 @@ public class APIController {
     }
 
     @GetMapping("/pickBans")
-    public PickResponse pickBans(@RequestParam(required = true) List<Integer> enemies, @RequestParam(required = true) List<Integer> bans) {
-        assert enemies != null;
-        assert !enemies.isEmpty() && enemies.size() <= 5;
-        assert bans != null & !bans.isEmpty();
+    public PickResponse pickBans(@RequestParam(required = true) List<Integer> enemies, @RequestParam(required = false) List<Integer> bans) {
+        if(enemies == null || enemies.isEmpty() || enemies.size()>5) {
+            logger.error("APIController received faulty request");
+            return null;
+        }
 
         List<Hero> enemyHeroes = heroService.findAll()
                 .stream()
                 .filter(hero -> enemies.contains(hero.getId()))
                 .toList();
-
 
         List<Hero> bannedHeroes = heroService.findAll()
                 .stream()

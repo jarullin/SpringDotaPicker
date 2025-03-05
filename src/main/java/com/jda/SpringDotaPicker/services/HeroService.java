@@ -6,6 +6,8 @@ import com.jda.SpringDotaPicker.models.Matchup;
 import com.jda.SpringDotaPicker.repositories.HeroesRepository;
 import com.jda.SpringDotaPicker.repositories.MatchupsRepository;
 import com.jda.SpringDotaPicker.repositories.RoleRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -16,6 +18,7 @@ public class HeroService {
     private final HeroesRepository heroesRepository;
     private final MatchupsRepository matchupsRepository;
     private final RoleRepository roleRepository;
+    private static final Logger logger = LoggerFactory.getLogger(HeroService.class);
 
     public HeroService(HeroesRepository heroesRepository, MatchupsRepository matchupsRepository, RoleRepository roleRepository) {
         this.heroesRepository = heroesRepository;
@@ -62,29 +65,22 @@ public class HeroService {
                 .collect(Collectors.toMap(Hero::getId, x -> 50.0));
         for (Hero enemy : enemies) {
             int maxGamesPlayed = matchupsRepository.findMaxGamesPlayedForEnemy(enemy.getId()).orElse(10000);
-            System.out.println("maxGP for " + enemy.getName() + " is " + maxGamesPlayed);
             int minGamesPlayed = matchupsRepository.findMinGamesPlayedForEnemy(enemy.getId()).orElse(0);
-            System.out.println("minGP for " + enemy.getName() + " is " + minGamesPlayed);
             // if hero rarely picked against given enemy, the score will not changed
             // currently only top 50% picked heroes are taken into account
-            double threshold = minGamesPlayed + (double) (maxGamesPlayed - minGamesPlayed) / 4;
-            for (Integer heroId : pool.keySet()) {
-                Matchup matchup = matchupsRepository.findById_HeroIdAndId_EnemyId(heroId, enemy.getId()).orElse(null);
-                try {
-                    if (matchup != null & matchup.getGamesPlayed() >= threshold) {
+            double threshold = minGamesPlayed + (maxGamesPlayed - minGamesPlayed) / 4.0;
+            pool.forEach((heroId, score) -> {
+                matchupsRepository.findById_HeroIdAndId_EnemyId(heroId, enemy.getId()).ifPresent(matchup -> {
+                    if (matchup.getGamesPlayed() >= threshold) {
                         // 20% of winrate/loserate are added to score
-                        System.out.println(matchup);
                         double winrateAgainst = ((double) matchup.getWins() / matchup.getGamesPlayed()) * 100;
                         double delta = 1 * (winrateAgainst - 50);
-                        pool.compute(heroId, (key, value) -> value + delta);
-                        System.out.println("Changing win prob for " + heroId + ", delta=" + delta);
+                        pool.put(heroId, score + delta);
                     }
-                } catch (Exception e) {
-                    System.out.println("Error while looking for matchup: heroId=" + heroId + ", enemyId=" + enemy.getId());
-                }
-            }
+                });
+
+            });
         }
-        System.out.println(pool);
         return pool;
     }
 
@@ -94,7 +90,6 @@ public class HeroService {
      * @return top 5 carry picks against given enemy
      */
     public List<HeroPick> getRolePicks(List<Hero> enemies, String role) {
-        //System.out.println("Calling 'calculatePick', enemies="+enemies);
         return calculatePick(enemies)
                .entrySet()
                .stream()
@@ -116,7 +111,6 @@ public class HeroService {
      * @return top 5 picks for selected role against given enemy
      */
     public List<HeroPick> getRolePicks(List<Hero> enemies, List<Hero> bans, String role) {
-        //System.out.println("Calling 'calculatePick', enemies="+enemies);
         return applyBans(calculatePick(enemies), bans)
                 .entrySet()
                 .stream()
@@ -134,9 +128,7 @@ public class HeroService {
     private Map<Integer, Double> applyBans(Map<Integer, Double> pool, List<Hero> bans) {
         for(Hero ban : bans) {
             int maxGamesPlayed = matchupsRepository.findMaxGamesPlayedForEnemy(ban.getId()).orElse(10000);
-            //System.out.println("maxGP for " + ban.getName() + " is " + maxGamesPlayed);
             int minGamesPlayed = matchupsRepository.findMinGamesPlayedForEnemy(ban.getId()).orElse(0);
-            //System.out.println("minGP for " + ban.getName() + " is " + minGamesPlayed);
             // if hero rarely picked against given enemy, the score will not changed
             // currently only top 50% picked heroes are taken into account
             double threshold = minGamesPlayed + (double) (maxGamesPlayed - minGamesPlayed) / 2;
@@ -145,13 +137,12 @@ public class HeroService {
                 try {
                     if (matchup != null & matchup.getGamesPlayed() >= threshold) {
                         // 20% of winrate/loserate are added to score
-                        //System.out.println(matchup);
                         double winrateAgainst = ((double) matchup.getWins() / matchup.getGamesPlayed()) * 100;
                         double delta = 2 * (- winrateAgainst - 50);
                         pool.compute(heroId, (key, value) -> value + delta);
-                        //System.out.println("Changing win prob for " + heroId + ", delta=" + delta);
                     }
                 } catch (Exception e) {
+                    logger.error("Error while looking for matchup: heroId=" + heroId + ", enemyId=" + ban.getId());
                     System.out.println("Error while looking for matchup: heroId=" + heroId + ", enemyId=" + ban.getId());
                 }
             }
