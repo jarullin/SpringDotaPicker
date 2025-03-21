@@ -34,14 +34,15 @@ public class HeroService {
         List<Hero> res = new ArrayList<>();
         heroes.iterator().forEachRemaining(res::add);
         res.sort(Comparator.comparing(Hero::getName));
-        return res.stream().map(hero -> {
-            List<String> roles = roleRepository.findById_HeroId(hero.getId())
-                    .stream()
-                    .map(heroRole -> heroRole.getId().getRole())
-                    .collect(Collectors.toList());
-            hero.setRoles(roles);
-            return hero;
-        }).collect(Collectors.toList());
+        return res;
+//        return res.stream().map(hero -> {
+//            List<String> roles = roleRepository.findById_HeroId(hero.getId())
+//                    .stream()
+//                    .map(heroRole -> heroRole.getId().getRole())
+//                    .collect(Collectors.toList());
+//            hero.setRoles(roles);
+//            return hero;
+//        }).collect(Collectors.toList());
     }
 
     /*
@@ -87,7 +88,7 @@ public class HeroService {
     /**
      * @param enemies: list of enemies
      * @param role: role for filter
-     * @return top 5 carry picks against given enemy
+     * @return top 5 carry picks for 5 roles against given enemy
      */
     public List<HeroPick> getRolePicks(List<Hero> enemies, String role) {
         return calculatePick(enemies)
