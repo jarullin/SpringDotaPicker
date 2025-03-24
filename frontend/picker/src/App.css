@@ -1,0 +1,68 @@
+.hero-image {
+  max-width: 110px;
+  max-height: 62px;
+}
+
+
+:root {
+  font-family: "CalcFont";
+}
+@font-face {
+  font-family: 'CalcFont';
+  src: url('assets/fonts/3574.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.picks-teams{
+  margin: 5px;
+  flex-grow: 2;
+  border: 2px solid white;
+  border-radius: 10px;
+  max-width: 630px;
+}
+
+img.picked-hero{
+  width: 110px;  
+  height: 62px;
+  margin: 3px;
+}
+
+img.banned-hero{
+  width: 55px;  
+  height: 31px;
+  margin: 1px;
+}
+
+.container-top {
+  display: flex;
+  justify-content: center;
+  /* grid-template-columns: minmax(450px, auto) auto minmax(450px, auto); */
+}
+
+.container-bottom {
+  display: flex;
+  flex-direction: column;
+  /* grid-template-columns: repeat(auto-fit, minmax(600px, auto)); */
+}
+
+/* @media (max-width: 1400px) {
+  .container-top {
+    grid-template-columns: 1fr;
+  }
+} */
+
+.pick-container {
+  padding: 5px;
+  display: flex;
+  flex-wrap: nowrap;
+  border: 1px solid black;
+  border-radius: 10px;
+  justify-content: center;
+}
+
+.ban-container {
+  display: flex;
+  padding: 10px;
+  justify-content: center;
+}
